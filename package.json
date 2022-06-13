@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start:dev": "ts-node ./src/server.ts",
+    "start:dev": "nodemon ./src/server.ts",
     "start:prod": "tsc && node ./build/server.js"
   },
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/IlayMorozoff/simple-crud-api.git"
@@ -20,9 +20,10 @@
   "homepage": "https://github.com/IlayMorozoff/simple-crud-api#readme",
   "devDependencies": {
     "@types/node": "^17.0.42",
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.16",
     "ts-node": "^10.8.1",
-    "typescript": "^4.7.3",
-    "dotenv": "^16.0.1"
+    "typescript": "^4.7.3"
   },
   "dependencies": {
     "uuid": "^8.3.2"

@@ -1,5 +1,3 @@
-import dotenv from 'dotenv';
+import { sum } from './sum/sum';
 
-dotenv.config();
-
-console.log(process.env.TEST_VAR)
+console.log(sum(2,5))
