@@ -18,12 +18,13 @@ export class Application {
   private createServer(): http.Server {
     return http.createServer((req, res) => {
       const isEmit = this.eventEmitter.emit('initRouter', req, res);
+      console.log(isEmit)
       
       if (!isEmit) {
         res.writeHead(404, {
           'Content-type': 'application/json'
         })
-        res.end(JSON.stringify({ message: 'there is no such endpoint' }));
+        res.end(JSON.stringify({ message: 'This resource was not found' }));
       }
     });
   }
