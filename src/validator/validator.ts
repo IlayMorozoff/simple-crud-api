@@ -1,7 +1,8 @@
 import { IUserModel } from "../model/users";
+import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
 export class Validator {
-  private requiredField: string[];
+  requiredField: string[];
 
   constructor() {
     this.requiredField = ['username', 'age', 'hobbies'];
@@ -12,4 +13,9 @@ export class Validator {
 
     return this.requiredField.every((key) => keys.includes(key));
   }
+
+  uuidValidateV4(uuid: string): boolean {
+    return uuidValidate(uuid) && uuidVersion(uuid) === 4;
+  };
+
 }

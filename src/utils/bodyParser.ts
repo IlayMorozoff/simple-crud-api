@@ -1,6 +1,8 @@
 import http from 'http';
+import { jsonParser } from './jsonParser';
+import { STATUS_CODES, writeHeader } from './writeHeader';
 
-export async function bodyParser(req: http.IncomingMessage): Promise<unknown> {
+export async function bodyParser(req: http.IncomingMessage, res: http.ServerResponse): Promise<unknown> {
   try {
     return await new Promise((resolve, reject) => {
       let body = '';
@@ -9,12 +11,17 @@ export async function bodyParser(req: http.IncomingMessage): Promise<unknown> {
       });
 
       req.on('end', () => {
-        const parsedBody = JSON.parse(body);
-        resolve(parsedBody);
+        try {
+          const parsedBody = JSON.parse(body);
+          resolve(parsedBody);
+        } catch (error) {
+          writeHeader(res, STATUS_CODES.InternalServerError);
+          jsonParser(res, { message: 'internal server error - something went wrong' })
+        }
       });
 
       req.on('error', () => {
-        reject('somethin went wront');
+        reject('somethin went wront'); 
       });
     });
   } catch (message) {

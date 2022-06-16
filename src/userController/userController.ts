@@ -1,4 +1,5 @@
 import http from 'http';
+import { CustomError } from '../error/error';
 import { IUserModel } from '../model/users';
 import { userService } from '../services/userService';
 import { bodyParser } from '../utils/bodyParser';
@@ -25,31 +26,56 @@ export class UserController {
 
   async getUser(req: http.IncomingMessage, res: http.ServerResponse, id: string): Promise<void> {
     try {
+      if (!this.validator.uuidValidateV4(id)) {
+        throw new CustomError('the user ID is not a uuid', STATUS_CODES.BadRequest);
+      }
+
       const users = await userService.findById(id);
-      console.log(users)
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, users);
     } catch (error) {
-      console.log(error);
+      const err = error as CustomError;
+      writeHeader(res, err.status);
+      jsonParser(res, { message: err.message});
     }
   }
 
   async createUser(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
-      const body = await bodyParser(req) as IUserModel;
-      console.log('is valid')
+      const body = await bodyParser(req, res) as IUserModel;
       if (!this.validator.isAllRequireField(body)) {
-        console.log('is valid')
-        res.end('Не указаны обязательные поля')
-        return;
+        throw new CustomError('one of the required fields (username, age, hobbies) is not specified', STATUS_CODES.BadRequest);
       }
       const user = await userService.create(body);
-      console.log(user)
       writeHeader(res, STATUS_CODES.Created);
       jsonParser(res, user);
     } catch (error) {
-      console.log(error);
+      const err = error as CustomError;
+      writeHeader(res, err.status);
+      jsonParser(res, { message: err.message});
     }
+  }
+
+  async updateUser(req: http.IncomingMessage, res: http.ServerResponse, id: string): Promise<void> {
+    try {
+
+      if (!this.validator.uuidValidateV4(id)) {
+        throw new CustomError('the user ID is not a uuid', STATUS_CODES.BadRequest);
+      }
+
+      const body = await bodyParser(req, res) as IUserModel;
+      const updatedUser = await userService.update(id, body);
+      writeHeader(res, STATUS_CODES.OK);
+      jsonParser(res, updatedUser);
+    } catch (error) {
+      const err = error as CustomError;
+      writeHeader(res, err.status);
+      jsonParser(res, { message: err.message});
+    }
+  }
+
+  async deleteUser(req: http.IncomingMessage, res: http.ServerResponse, id: string) {
+
   }
 }
 
