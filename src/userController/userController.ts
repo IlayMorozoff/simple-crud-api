@@ -3,6 +3,7 @@ import { CustomError } from '../error/error';
 import { IUserModel } from '../model/users';
 import { userService } from '../services/userService';
 import { bodyParser } from '../utils/bodyParser';
+import { handle500Error } from '../utils/handle500Error';
 import { jsonParser } from '../utils/jsonParser';
 import { STATUS_CODES, writeHeader } from '../utils/writeHeader';
 import { Validator } from '../validator/validator';
@@ -20,7 +21,12 @@ export class UserController {
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, users);
     } catch (error) {
-      console.log(error);
+      if (error instanceof CustomError) {
+        writeHeader(res, error.status);
+        jsonParser(res, { message: error.message});
+      } else {
+        handle500Error(res);
+      }
     }
   }
 
@@ -34,9 +40,12 @@ export class UserController {
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, users);
     } catch (error) {
-      const err = error as CustomError;
-      writeHeader(res, err.status);
-      jsonParser(res, { message: err.message});
+      if (error instanceof CustomError) {
+        writeHeader(res, error.status);
+        jsonParser(res, { message: error.message});
+      } else {
+        handle500Error(res);
+      }
     }
   }
 
@@ -50,9 +59,12 @@ export class UserController {
       writeHeader(res, STATUS_CODES.Created);
       jsonParser(res, user);
     } catch (error) {
-      const err = error as CustomError;
-      writeHeader(res, err.status);
-      jsonParser(res, { message: err.message});
+      if (error instanceof CustomError) {
+        writeHeader(res, error.status);
+        jsonParser(res, { message: error.message});
+      } else {
+        handle500Error(res);
+      }
     }
   }
 
@@ -75,7 +87,22 @@ export class UserController {
   }
 
   async deleteUser(req: http.IncomingMessage, res: http.ServerResponse, id: string) {
+    try {
+      if (!this.validator.uuidValidateV4(id)) {
+        throw new CustomError('the user ID is not a uuid', STATUS_CODES.BadRequest);
+      }
+      const updatedUser = await userService.delete(id);
 
+      writeHeader(res, STATUS_CODES.NoContent);
+      jsonParser(res, updatedUser);
+    } catch (error) {
+      if (error instanceof CustomError) {
+        writeHeader(res, error.status);
+        jsonParser(res, { message: error.message});
+      } else {
+        handle500Error(res);
+      }
+    }
   }
 }
 

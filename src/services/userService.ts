@@ -69,11 +69,14 @@ export class UserService {
   }
 
   delete(id: string): Promise<IUserModel> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const deletedUser = this.users.find((el) => el.id === id);
       this.users = this.users.filter((item) => item.id !== id);
       if (deletedUser) {
         resolve(deletedUser);
+      } else {
+        const err = new CustomError('user with such a id was not found', STATUS_CODES.NotFound);
+        reject(err);
       }
     });
   }

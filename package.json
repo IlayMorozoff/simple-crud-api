@@ -5,7 +5,7 @@
   "main": "build/server.js",
   "scripts": {
     "start:dev": "nodemon -w src src/server.ts",
-    "start:prod": "tsc"
+    "start:prod": "tsc && node ./build/server.js"
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,5 @@
 import http from 'http';
+import { handle500Error } from './handle500Error';
 import { jsonParser } from './jsonParser';
 import { STATUS_CODES, writeHeader } from './writeHeader';
 
@@ -15,8 +16,7 @@ export async function bodyParser(req: http.IncomingMessage, res: http.ServerResp
           const parsedBody = JSON.parse(body);
           resolve(parsedBody);
         } catch (error) {
-          writeHeader(res, STATUS_CODES.InternalServerError);
-          jsonParser(res, { message: 'internal server error - something went wrong' })
+          handle500Error(res)
         }
       });
 
