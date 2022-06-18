@@ -30,3 +30,15 @@ Server should answer with status code 400 and corresponding message if userId is
 Server should answer with status code 404 and corresponding message if record with id === userId doesn't exist
 
 ### Attention!!! The put method can also work as a patch and when the user changes, it is not necessary to pass all the fields of the object, you can only change which ones are necessary.
+
+Users are stored as objects that have following properties:
+id — unique identifier generated on server side
+username — user's name (required)
+age — user's age (required)
+hobbies — user's hobbies (required)
+
+Requests to non-existing endpoints (e.g. some-non/existing/resource) should be handled (server should answer with status code 404 and corresponding human-friendly message)
+
+Errors on the server side that occur during the processing of a request handled and processed correctly (server answer with status code 500 and corresponding human-friendly message)
+
+Value of port on which application is running is stored in .env file
