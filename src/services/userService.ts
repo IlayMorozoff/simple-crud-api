@@ -6,7 +6,7 @@ import { Validator } from '../validator/validator';
 
 
 export class UserService {
-  private users: IUserModel[];
+  private users: IUserModel[] = [];
   private validator = new Validator();
 
   constructor() {
@@ -15,6 +15,7 @@ export class UserService {
 
   findAll(): Promise<IUserModel[]> {
     return new Promise((resolve) => {
+
       resolve(this.users);
     })
   }
@@ -49,7 +50,7 @@ export class UserService {
           const err = new CustomError(Messages.UserNotFound, STATUS_CODES.NotFound);
           reject(err);
         }
-        const currentDataUser = await userService.findById(id);
+        const currentDataUser = await this.findById(id);
   
         const { age, hobbies, username } = user;
   
@@ -93,5 +94,3 @@ export class UserService {
     return newBody;
   }
 }
-
-export const userService = new UserService();

@@ -6,7 +6,9 @@
   "scripts": {
     "start:dev": "nodemon -w src src/server.ts",
     "start:prod": "tsc && node ./build/server.js",
-    "test": "jest"
+    "test": "jest",
+    "start:multi": "nodemon -w src src/multi.ts",
+    "start:multi-prod": "tsc && node ./build/multi.js"
   },
   "keywords": [],
   "author": "",

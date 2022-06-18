@@ -1,7 +1,7 @@
 import http from 'http';
 import { CustomError } from '../error/error';
 import { IUserModel, Messages } from '../model/users';
-import { userService } from '../services/userService';
+import { UserService } from '../services/userService';
 import { bodyParser } from '../utils/bodyParser';
 import { handleError } from '../utils/handleError';
 import { jsonParser } from '../utils/jsonParser';
@@ -10,6 +10,7 @@ import { Validator } from '../validator/validator';
 
 export class UserController {
   private validator: Validator;
+  private userService = new UserService();
 
   constructor() {
     this.validator = new Validator();
@@ -17,7 +18,7 @@ export class UserController {
 
   async getUsers(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
-      const users = await userService.findAll();
+      const users = await this.userService.findAll();
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, users);
     } catch (error) {
@@ -31,7 +32,7 @@ export class UserController {
         throw new CustomError(Messages.NotUuid, STATUS_CODES.BadRequest);
       }
 
-      const users = await userService.findById(id);
+      const users = await this.userService.findById(id);
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, users);
     } catch (error) {
@@ -45,7 +46,7 @@ export class UserController {
       if (!this.validator.isAllRequireField(body)) {
         throw new CustomError(Messages.RequiredFieldNotFound, STATUS_CODES.BadRequest);
       }
-      const user = await userService.create(body);
+      const user = await this.userService.create(body);
       writeHeader(res, STATUS_CODES.Created);
       jsonParser(res, user);
     } catch (error) {
@@ -61,7 +62,7 @@ export class UserController {
       }
 
       const body = await bodyParser(req, res) as IUserModel;
-      const updatedUser = await userService.update(id, body);
+      const updatedUser = await this.userService.update(id, body);
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, updatedUser);
     } catch (error) {
@@ -74,7 +75,7 @@ export class UserController {
       if (!this.validator.uuidValidateV4(id)) {
         throw new CustomError(Messages.NotUuid, STATUS_CODES.BadRequest);
       }
-      const updatedUser = await userService.delete(id);
+      const updatedUser = await this.userService.delete(id);
 
       writeHeader(res, STATUS_CODES.NoContent);
       jsonParser(res, updatedUser);
