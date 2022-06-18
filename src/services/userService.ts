@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { CustomError } from '../error/error';
-import { IUserModel } from "../model/users";
+import { IUserModel, Messages } from "../model/users";
 import { STATUS_CODES } from '../utils/writeHeader';
 import { Validator } from '../validator/validator';
 
@@ -10,12 +10,7 @@ export class UserService {
   private validator = new Validator();
 
   constructor() {
-    this.users = [{
-      hobbies: [],
-      id: '1',
-      username: '2323',
-      age: 29
-    }];
+    this.users = [];
   }
 
   findAll(): Promise<IUserModel[]> {
@@ -30,7 +25,7 @@ export class UserService {
       if (user) {
         resolve(user);
       } else {
-        const err = new CustomError('user with such a id was not found', STATUS_CODES.NotFound);
+        const err = new CustomError(Messages.UserNotFound, STATUS_CODES.NotFound);
         reject(err);
       }
     });
@@ -47,24 +42,29 @@ export class UserService {
 
   update(id: string, user: IUserModel): Promise<IUserModel> {
     return new Promise(async (resolve, reject) => {
-      const updatedUserIndex = this.users.findIndex((item) => item.id === id);
+      try {
+        const updatedUserIndex = this.users.findIndex((item) => item.id === id);
 
-      if (updatedUserIndex === -1) {
-        const err = new CustomError('user with such a id was not found', STATUS_CODES.NotFound);
+        if (updatedUserIndex === -1) {
+          const err = new CustomError(Messages.UserNotFound, STATUS_CODES.NotFound);
+          reject(err);
+        }
+        const currentDataUser = await userService.findById(id);
+  
+        const { age, hobbies, username } = user;
+  
+        const newUpdatedBody: IUserModel = {
+          age: age || currentDataUser.age,
+          hobbies: hobbies || currentDataUser.hobbies,
+          username: username || currentDataUser.username
+        }
+        this.users[updatedUserIndex] = { id, ...newUpdatedBody };
+  
+        resolve(this.users[updatedUserIndex]);
+      } catch (error) {
+        const err = new CustomError(Messages.UserNotFound, STATUS_CODES.NotFound);
         reject(err);
       }
-      const currentDataUser = await userService.findById(id)
-
-      const { age, hobbies, username } = user;
-
-      const newUpdatedBody: IUserModel = {
-        age: age || currentDataUser.age,
-        hobbies: hobbies || currentDataUser.hobbies,
-        username: username || currentDataUser.username
-      }
-      this.users[updatedUserIndex] = { id, ...newUpdatedBody };
-
-      resolve(this.users[updatedUserIndex]);
     })
   }
 
@@ -75,7 +75,7 @@ export class UserService {
       if (deletedUser) {
         resolve(deletedUser);
       } else {
-        const err = new CustomError('user with such a id was not found', STATUS_CODES.NotFound);
+        const err = new CustomError(Messages.UserNotFound, STATUS_CODES.NotFound);
         reject(err);
       }
     });

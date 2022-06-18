@@ -3,6 +3,7 @@ import http from "http";
 import { UserController } from "../userController/userController";;
 import { STATUS_CODES, writeHeader } from "../utils/writeHeader";
 import { jsonParser } from '../utils/jsonParser';
+import { Messages } from "../model/users";
 
 const enum Urls {
   BASE_REQUES = '/api/users',
@@ -38,7 +39,7 @@ export class Router {
         this.userController.deleteUser(req, res, id);
       } else {
         writeHeader(res, STATUS_CODES.NotFound);
-        jsonParser(res, { message: 'This resource was not found' });
+        jsonParser(res, { message: Messages.ResourceNotFound });
       }
     });
   }

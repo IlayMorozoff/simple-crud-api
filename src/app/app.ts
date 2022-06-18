@@ -3,7 +3,7 @@ import http from 'http';
 import { Router } from '../router/router';
 
 export class Application {
-  private server: http.Server;
+  server: http.Server;
   private eventEmitter = new EventEmitter()
 
   constructor() {
