@@ -1,7 +1,11 @@
 import EventEmitter from 'events';
 import http from 'http';
+import dotenv from 'dotenv';
 import { Router } from '../router/router';
-import { PORT } from '../server';
+
+dotenv.config();
+
+const PORT = process.env.PORT || 3222;
 
 export class Application {
   server: http.Server;
