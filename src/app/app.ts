@@ -1,8 +1,7 @@
 import EventEmitter from 'events';
 import http from 'http';
 import { Router } from '../router/router';
-
-export const PORT = process.env.PORT || 3222;
+import { PORT } from '../server';
 
 export class Application {
   server: http.Server;
