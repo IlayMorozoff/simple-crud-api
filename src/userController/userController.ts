@@ -43,6 +43,11 @@ export class UserController {
   async createUser(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
     try {
       const body = await bodyParser(req, res) as IUserModel;
+
+      if (!this.validator.validateData(body)) {
+        throw new CustomError(Messages.InvalidDataTypes, STATUS_CODES.BadRequest);
+      }
+
       if (!this.validator.isAllRequireField(body)) {
         throw new CustomError(Messages.RequiredFieldNotFound, STATUS_CODES.BadRequest);
       }
@@ -62,6 +67,11 @@ export class UserController {
       }
 
       const body = await bodyParser(req, res) as IUserModel;
+
+      if (!this.validator.validateData(body)) {
+        throw new CustomError(Messages.InvalidDataTypes, STATUS_CODES.BadRequest);
+      }
+
       const updatedUser = await this.userService.update(id, body);
       writeHeader(res, STATUS_CODES.OK);
       jsonParser(res, updatedUser);

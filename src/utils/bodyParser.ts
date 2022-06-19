@@ -1,7 +1,5 @@
 import http from 'http';
 import { handle500Error } from './handle500Error';
-import { jsonParser } from './jsonParser';
-import { STATUS_CODES, writeHeader } from './writeHeader';
 
 export async function bodyParser(req: http.IncomingMessage, res: http.ServerResponse): Promise<unknown> {
   try {
