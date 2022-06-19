@@ -20,6 +20,11 @@ export class UserService {
 
   findById(id: string): Promise<IUserModel> {
     return new Promise((resolve, reject) => {
+
+      if (!this.validator.uuidValidateV4(id)) {
+        reject(new CustomError(Messages.NotUuid, STATUS_CODES.BadRequest));
+      }
+
       const user = this.repository.findById(id);
       
       if (user) {
@@ -33,6 +38,15 @@ export class UserService {
 
   create(user: IUserModel): Promise<IUserModel> {
     return new Promise((resolve) => {
+
+      if (!this.validator.validateData(user)) {
+        throw new CustomError(Messages.InvalidDataTypes, STATUS_CODES.BadRequest);
+      }
+
+      if (!this.validator.isAllRequireField(user)) {
+        throw new CustomError(Messages.RequiredFieldNotFound, STATUS_CODES.BadRequest);
+      }
+
       const normalizedBody = this.normalizeBody(user);
       const newUser = { id: uuidv4(), ...normalizedBody };
       const newUserFromRep = this.repository.create(newUser);
@@ -43,6 +57,14 @@ export class UserService {
   update(id: string, user: IUserModel): Promise<IUserModel> {
     return new Promise(async (resolve, reject) => {
       try {
+
+        if (!this.validator.uuidValidateV4(id)) {
+          reject(new CustomError(Messages.NotUuid, STATUS_CODES.BadRequest));
+        }
+
+        if (!this.validator.validateData(user)) {
+          reject(new CustomError(Messages.InvalidDataTypes, STATUS_CODES.BadRequest));
+        }
 
         const currentDataUser = await this.findById(id);
   
@@ -70,6 +92,9 @@ export class UserService {
 
   delete(id: string): Promise<IUserModel> {
     return new Promise((resolve, reject) => {
+      if (!this.validator.uuidValidateV4(id)) {
+        reject(new CustomError(Messages.NotUuid, STATUS_CODES.BadRequest));
+      }
       const deletedUser = this.repository.delete(id)
       if (deletedUser) {
         resolve(deletedUser);
