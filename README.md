@@ -2,6 +2,8 @@
 
 To run the application in development mode, write the command ``npm run start:dev`` on the command line, to run in prod mode ``npm run start:prod``, in clustering and development mode ``npm run start:multi``, in clustering and prod mode ``npm run start:-multi-prod``;
 
+ command ``npm run test`` - start tests for app
+
 ## Implemented endpoint `api/users`:
 
 `GET api/users` is used to get all persons
